@@ -133,9 +133,8 @@
 
         function downloadExcel() {
             var code = document.getElementById("excelCodeInput").value;
-            if (code === "316691054") {
-                fetch('/registrations')
-                    .then(response => response.json())
+            if (code === "31669") {
+		fetch('http://localhost:3000/registrations')                    .then(response => response.json())
                     .then(data => {
                         var formattedData = data.map(registration => {
                             return {
