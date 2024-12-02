@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 
 const app = express();
@@ -12,6 +13,7 @@ db.serialize(() => {
 });
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.post('/register', (req, res) => {
     const { username, carNumber } = req.body;
