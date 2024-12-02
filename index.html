@@ -1,3 +1,4 @@
+<!-- HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,16 +21,46 @@
             height: auto;
             display: none; /* Hide the image initially */
         }
-        .child-fields {
-            margin-top: 10px;
-        }
     </style>
     <!-- הוספת קישור ל-SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <script>
-        let registrations = [];
-        let childCount = 0;
+</head>
+<body>
+    <h1>מה המצב , טוב לראותך  </h1>
+    <h1>HTML זוהי התנסות שלי בכתיבת  </h1>
 
+    <p>This is my first website built with HTML!</p>
+
+    <h2>About Me</h2>
+    <p>My name is דוד ברכה. I love coding and building websites.</p>
+
+    <h2>אחינעם ברכה המתוקה</h2>
+    <p>להצגת התמונה הזן את הקוד הנכון:</p>
+    <input type="text" id="codeInput" placeholder="הזן קוד">
+    <button onclick="checkCode()">אשר</button>
+    <img id="secretImage" src="Ahinoam.jpg" alt="A beautiful scenery">
+
+    <h2>הרשמה</h2>
+    <form id="registrationForm">
+        <label for="username">שם משתמש:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="carNumber">מספר רכב:</label><br>
+        <input type="text" id="carNumber" name="carNumber"><br><br>
+        <button type="button" onclick="register()">הרשם</button>
+    </form>
+    
+    <h2>הורדת טבלת אקסל</h2>
+    <p>להורדת הטבלה הזן את הקוד הנכון:</p>
+    <input type="text" id="excelCodeInput" placeholder="הזן קוד">
+    <button onclick="downloadExcel()">הורד טבלת אקסל</button>
+
+    <h2>Contact</h2>
+    <p>Feel free to <a href="mailto:davidbera8@gmail.com">email me</a> with any questions or comments.</p>
+
+    <h2>השעה הנוכחית</h2>
+    <p>השעה הנוכחית היא: <span id="time"></span></p>
+
+    <script>
         function updateTime() {
             var now = new Date();
             var hours = now.getHours();
@@ -51,105 +82,36 @@
         }
 
         function register() {
-            var firstName = document.getElementById("firstName").value;
-            var lastName = document.getElementById("lastName").value;
-            var idNumber = document.getElementById("idNumber").value;
+            var username = document.getElementById("username").value;
             var carNumber = document.getElementById("carNumber").value;
-            var city = document.getElementById("city").value;
-            var street = document.getElementById("street").value;
-            var houseNumber = document.getElementById("houseNumber").value;
-            var numChildren = document.getElementById("numChildren").value;
-
-            let children = [];
-            for (let i = 0; i < childCount; i++) {
-                let name = document.getElementById(`childName${i}`).value;
-                let dob = document.getElementById(`childDOB${i}`).value;
-                let id = document.getElementById(`childID${i}`).value;
-                let age = calculateAge(dob);
-                children.push({ name, dob, age, id });
-            }
-
-            if (firstName && lastName && idNumber && city && street && houseNumber && carNumber) {
-                registrations.push({
-                    firstName,
-                    lastName,
-                    idNumber,
-                    carNumber,
-                    city,
-                    street,
-                    houseNumber,
-                    numChildren,
-                    children
+            if (username && carNumber) {
+                fetch('http://localhost:3000/register', { // ודא שהכתובת URL נכונה
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: username, carNumber: carNumber })
+                }).then(response => {
+                    return response.text();
+                }).then(data => {
+                    alert(data);
+                    document.getElementById("registrationForm").reset();
+                }).catch(error => {
+                    console.error('Error:', error);
                 });
-
-                alert("נרשמת בהצלחה!");
-                document.getElementById("registrationForm").reset();
-                document.getElementById("childrenContainer").innerHTML = '';
-                childCount = 0;
             } else {
                 alert("אנא מלא את כל השדות.");
             }
         }
 
-        function calculateAge(dob) {
-            var dobDate = new Date(dob);
-            var diff = Date.now() - dobDate.getTime();
-            var ageDate = new Date(diff);
-            return Math.abs(ageDate.getUTCFullYear() - 1970);
-        }
-
-        function addChild() {
-            if (childCount >= 15) {
-                alert("לא ניתן להוסיף יותר מ-15 ילדים.");
-                return;
-            }
-
-            var container = document.getElementById("childrenContainer");
-            var div = document.createElement("div");
-            div.className = "child-fields";
-            div.innerHTML = `
-                <h3>ילד ${childCount + 1}</h3>
-                <label for="childName${childCount}">שם:</label><br>
-                <input type="text" id="childName${childCount}" name="childName${childCount}" pattern="[A-Za-zא-ת]+" title="יש להזין רק אותיות"><br>
-                <label for="childDOB${childCount}">תאריך לידה:</label><br>
-                <input type="date" id="childDOB${childCount}" name="childDOB${childCount}" onchange="updateAge(${childCount})"><br>
-                <label for="childAge${childCount}">גיל:</label><br>
-                <input type="text" id="childAge${childCount}" name="childAge${childCount}" readonly><br>
-                <label for="childID${childCount}">תעודת זהות:</label><br>
-                <input type="text" id="childID${childCount}" name="childID${childCount}" maxlength="9" pattern="\\d{9}" title="יש להזין 9 ספרות"><br><br>
-            `;
-            container.appendChild(div);
-            childCount++;
-        }
-
-        function updateAge(index) {
-            var dob = document.getElementById(`childDOB${index}`).value;
-            var age = calculateAge(dob);
-            document.getElementById(`childAge${index}`).value = age;
-        }
-
         function downloadExcel() {
             var code = document.getElementById("excelCodeInput").value;
             if (code === "316691054") {
-                fetch('/registrations')
+                fetch('http://localhost:3000/registrations') // ודא שהכתובת URL נכונה
                     .then(response => response.json())
                     .then(data => {
-                        var formattedData = data.map(registration => {
-                            return {
-                                'שם פרטי': registration.firstName,
-                                'שם משפחה': registration.lastName,
-                                'תעודת זהות': registration.idNumber,
-                                'מספר רכב': registration.carNumber,
-                                'עיר': registration.city,
-                                'רחוב': registration.street,
-                                'מספר בית': registration.houseNumber,
-                                'מספר ילדים': registration.numChildren,
-                                'ילדים': registration.children.map((child, i) => 
-                                    `ילד ${i+1}: ${child.name}, ${child.dob}, גיל: ${child.age}, תעודת זהות: ${child.id}`).join('\n')
-                            };
-                        });
                         var wb = XLSX.utils.book_new();
-                        var ws = XLSX.utils.json_to_sheet(formattedData);
+                        var ws = XLSX.utils.json_to_sheet(data);
                         XLSX.utils.book_append_sheet(wb, ws, "Registrations");
                         XLSX.writeFile(wb, "registrations.xlsx");
                     }).catch(error => {
@@ -165,36 +127,5 @@
         // Initial call to display time immediately on load
         updateTime();
     </script>
-</head>
-<body>
-    <h1>מה המצב , טוב לראותך  </h1>
-    <h1>HTML זוהי התנסות שלי בכתיבת  </h1>
-
-    <p>This is my first website built with HTML!</p>
-
-    <h2>About Me</h2>
-    <p>My name is דוד ברכה. I love coding and building websites.</p>
-
-    <h2>אחינעם ברכה המתוקה</h2>
-    <p>להצגת התמונה הזן את הקוד הנכון:</p>
-    <input type="text" id="codeInput" placeholder="הזן קוד">
-    <button onclick="checkCode()">אשר</button>
-    <img id="secretImage" src="Ahinoam.jpg" alt="A beautiful scenery">
-
-    <h2>הרשמה</h2>
-    <form id="registrationForm">
-        <label for="firstName">שם פרטי:</label><br>
-        <input type="text" id="firstName" name="firstName" pattern="[A-Za-zא-ת]+" title="יש להזין רק אותיות"><br>
-        <label for="lastName">שם משפחה:</label><br>
-        <input type="text" id="lastName" name="lastName" pattern="[A-Za-zא-ת]+" title="יש להזין רק אותיות"><br>
-        <label for="idNumber">תעודת זהות:</label><br>
-        <input type="text" id="idNumber" name="idNumber" maxlength="9" pattern="\d{9}" title="יש להזין 9 ספרות"><br>
-        <label for="carNumber">מספר רכב:</label><br>
-        <input type="text" id="carNumber" name="carNumber"><br>
-        <label for="city">עיר:</label><br>
-        <input type="text" id="city" name="city"><br>
-        <label for="street">רחוב:</label><br>
-        <input type="text" id="street" name="street"><br>
-        <label for="houseNumber">מספר בית:</label><br>
-        <input type="text" id="houseNumber" name="houseNumber"><br>
-        <label for="numChildren">[_{{{CITATION{{{_1{](https://github.com/demkantor/developers_blog/tree/d90dacbf41736a773f2aa35ccfdb0838800f318d/src%2Fpages%2Fposts%2F005.md)[_{{{CITATION{{{_2{](https://github.com/Beats0/js-practice/tree/dbceaf1e663abfdee4de29b8308f70b68dc63b36/JavaScript_TheDefinitiveGuide%2FEvent%2FREADME.MD)
+</body>
+</html>
