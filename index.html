@@ -162,7 +162,7 @@
             div.innerHTML = `
                 <h3>ילד ${childCount + 1}</h3>
                 <label for="childName${childCount}">שם:</label><br>
-                <input type="text" id="childName${childCount}" name="childName${childCount}"><br>
+                <input type="text" id="childName${childCount}" name="childName${childCount}" pattern="[A-Za-zא-ת]+" title="יש להזין רק אותיות"><br>
                 <label for="childDOB${childCount}">תאריך לידה:</label><br>
                 <input type="date" id="childDOB${childCount}" name="childDOB${childCount}" onchange="updateAge(${childCount})"><br>
                 <label for="childAge${childCount}">גיל:</label><br>
@@ -188,4 +188,5 @@
                     .then(data => {
                         var formattedData = data.map(registration => {
                             return {
-                                'שם פרטי': registration[_{{{CITATION{{{_1{](https://github.com/EleanorEllingson/web-dev/tree/b2f2a382e77a20fd6895677c8b8f402ac4bae352/7-bank-project%2F1-template-route%2Ftranslations%2FREADME.ko.md)[_{{{CITATION{{{_2{](https://github.com/demkantor/developers_blog/tree/d90dacbf41736a773f2aa35ccfdb0838800f318d/src%2Fpages%2Fposts%2F005.md)[_{{{CITATION{{{_3{](https://github.com/Beats0/js-practice/tree/dbceaf1e663abfdee4de29b8308f70b68dc63b36/JavaScript_TheDefinitiveGuide%2FEvent%2FREADME.MD)
+                                'שם פרטי': registration.firstName,
+[_{{{CITATION{{{_1{](https://github.com/buribalazs/smooth-drag-order/tree/7b40d21d076c3e31765f61481f537beaf4c5ec9f/README.md)[_{{{CITATION{{{_2{](https://github.com/fireun/Masomon-Online-Shopping/tree/6fa264f2c43c095aa821a7eafd80b8ca66a77afe/user%2FcancellationRequest.php)[_{{{CITATION{{{_3{](https://github.com/demkantor/developers_blog/tree/d90dacbf41736a773f2aa35ccfdb0838800f318d/src%2Fpages%2Fposts%2F005.md)[_{{{CITATION{{{_4{](https://github.com/Beats0/js-practice/tree/dbceaf1e663abfdee4de29b8308f70b68dc63b36/JavaScript_TheDefinitiveGuide%2FEvent%2FREADME.MD)
