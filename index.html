@@ -20,6 +20,9 @@
             height: auto;
             display: none; /* Hide the image initially */
         }
+        .child-fields {
+            margin-top: 10px;
+        }
     </style>
     <!-- הוספת קישור ל-SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
@@ -41,11 +44,27 @@
 
     <h2>הרשמה</h2>
     <form id="registrationForm">
-        <label for="username">שם משתמש:</label><br>
-        <input type="text" id="username" name="username"><br>
+        <label for="firstName">שם פרטי:</label><br>
+        <input type="text" id="firstName" name="firstName" pattern="[A-Za-zא-ת]+" title="יש להזין רק אותיות"><br>
+        <label for="lastName">שם משפחה:</label><br>
+        <input type="text" id="lastName" name="lastName" pattern="[A-Za-zא-ת]+" title="יש להזין רק אותיות"><br>
+        <label for="idNumber">תעודת זהות:</label><br>
+        <input type="text" id="idNumber" name="idNumber" maxlength="9" pattern="\d{9}" title="יש להזין 9 ספרות"><br>
         <label for="carNumber">מספר רכב:</label><br>
-        <input type="text" id="carNumber" name="carNumber"><br><br>
-        <button type="button" onclick="register()">הרשם</button>
+        <input type="text" id="carNumber" name="carNumber"><br>
+        <label for="city">עיר:</label><br>
+        <input type="text" id="city" name="city"><br>
+        <label for="street">רחוב:</label><br>
+        <input type="text" id="street" name="street"><br>
+        <label for="houseNumber">מספר בית:</label><br>
+        <input type="text" id="houseNumber" name="houseNumber"><br>
+        <label for="numChildren">מספר ילדים:</label><br>
+        <input type="number" id="numChildren" name="numChildren" min="0" max="15"><br>
+        <button type="button" onclick="addChild()">הוסף ילד</button><br>
+
+        <div id="childrenContainer"></div>
+
+        <br><button type="button" onclick="register()">הרשם</button>
     </form>
     
     <h2>הורדת טבלת אקסל</h2>
@@ -60,6 +79,9 @@
     <p>השעה הנוכחית היא: <span id="time"></span></p>
 
     <script>
+        let registrations = [];
+        let childCount = 0;
+
         function updateTime() {
             var now = new Date();
             var hours = now.getHours();
@@ -81,50 +103,89 @@
         }
 
         function register() {
-            var username = document.getElementById("username").value;
+            var firstName = document.getElementById("firstName").value;
+            var lastName = document.getElementById("lastName").value;
+            var idNumber = document.getElementById("idNumber").value;
             var carNumber = document.getElementById("carNumber").value;
-            if (username && carNumber) {
-                fetch('http://localhost:3000/register', { // ודא שהכתובת URL נכונה
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username: username, carNumber: carNumber })
-                }).then(response => {
-                    return response.text();
-                }).then(data => {
-                    alert(data);
-                    document.getElementById("registrationForm").reset();
-                }).catch(error => {
-                    console.error('Error:', error);
+            var city = document.getElementById("city").value;
+            var street = document.getElementById("street").value;
+            var houseNumber = document.getElementById("houseNumber").value;
+            var numChildren = document.getElementById("numChildren").value;
+
+            let children = [];
+            for (let i = 0; i < childCount; i++) {
+                let name = document.getElementById(`childName${i}`).value;
+                let dob = document.getElementById(`childDOB${i}`).value;
+                let id = document.getElementById(`childID${i}`).value;
+                let age = calculateAge(dob);
+                children.push({ name, dob, age, id });
+            }
+
+            if (firstName && lastName && idNumber && city && street && houseNumber && carNumber) {
+                registrations.push({
+                    firstName,
+                    lastName,
+                    idNumber,
+                    carNumber,
+                    city,
+                    street,
+                    houseNumber,
+                    numChildren,
+                    children
                 });
+
+                alert("נרשמת בהצלחה!");
+                document.getElementById("registrationForm").reset();
+                document.getElementById("childrenContainer").innerHTML = '';
+                childCount = 0;
             } else {
                 alert("אנא מלא את כל השדות.");
             }
         }
 
+        function calculateAge(dob) {
+            var dobDate = new Date(dob);
+            var diff = Date.now() - dobDate.getTime();
+            var ageDate = new Date(diff);
+            return Math.abs(ageDate.getUTCFullYear() - 1970);
+        }
+
+        function addChild() {
+            if (childCount >= 15) {
+                alert("לא ניתן להוסיף יותר מ-15 ילדים.");
+                return;
+            }
+
+            var container = document.getElementById("childrenContainer");
+            var div = document.createElement("div");
+            div.className = "child-fields";
+            div.innerHTML = `
+                <h3>ילד ${childCount + 1}</h3>
+                <label for="childName${childCount}">שם:</label><br>
+                <input type="text" id="childName${childCount}" name="childName${childCount}"><br>
+                <label for="childDOB${childCount}">תאריך לידה:</label><br>
+                <input type="date" id="childDOB${childCount}" name="childDOB${childCount}" onchange="updateAge(${childCount})"><br>
+                <label for="childAge${childCount}">גיל:</label><br>
+                <input type="text" id="childAge${childCount}" name="childAge${childCount}" readonly><br>
+                <label for="childID${childCount}">תעודת זהות:</label><br>
+                <input type="text" id="childID${childCount}" name="childID${childCount}" maxlength="9" pattern="\\d{9}" title="יש להזין 9 ספרות"><br><br>
+            `;
+            container.appendChild(div);
+            childCount++;
+        }
+
+        function updateAge(index) {
+            var dob = document.getElementById(`childDOB${index}`).value;
+            var age = calculateAge(dob);
+            document.getElementById(`childAge${index}`).value = age;
+        }
+
         function downloadExcel() {
             var code = document.getElementById("excelCodeInput").value;
             if (code === "316691054") {
-                fetch('http://localhost:3000/registrations') // ודא שהכתובת URL נכונה
+                fetch('/registrations')
                     .then(response => response.json())
                     .then(data => {
-                        var wb = XLSX.utils.book_new();
-                        var ws = XLSX.utils.json_to_sheet(data);
-                        XLSX.utils.book_append_sheet(wb, ws, "Registrations");
-                        XLSX.writeFile(wb, "registrations.xlsx");
-                    }).catch(error => {
-                        console.error('Error:', error);
-                    });
-            } else {
-                alert("הקוד שהזנת שגוי. נסה שוב.");
-            }
-        }
-
-        // Update time every second
-        setInterval(updateTime, 1000);
-        // Initial call to display time immediately on load
-        updateTime();
-    </script>
-</body>
-</html>
+                        var formattedData = data.map(registration => {
+                            return {
+                                'שם פרטי': registration[_{{{CITATION{{{_1{](https://github.com/EleanorEllingson/web-dev/tree/b2f2a382e77a20fd6895677c8b8f402ac4bae352/7-bank-project%2F1-template-route%2Ftranslations%2FREADME.ko.md)[_{{{CITATION{{{_2{](https://github.com/demkantor/developers_blog/tree/d90dacbf41736a773f2aa35ccfdb0838800f318d/src%2Fpages%2Fposts%2F005.md)[_{{{CITATION{{{_3{](https://github.com/Beats0/js-practice/tree/dbceaf1e663abfdee4de29b8308f70b68dc63b36/JavaScript_TheDefinitiveGuide%2FEvent%2FREADME.MD)
