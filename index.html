@@ -84,7 +84,7 @@
             var username = document.getElementById("username").value;
             var carNumber = document.getElementById("carNumber").value;
             if (username && carNumber) {
-                fetch('/register', {
+                fetch('http://localhost:3000/register', { // ודא שהכתובת URL נכונה
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -106,7 +106,7 @@
         function downloadExcel() {
             var code = document.getElementById("excelCodeInput").value;
             if (code === "316691054") {
-                fetch('/registrations')
+                fetch('http://localhost:3000/registrations') // ודא שהכתובת URL נכונה
                     .then(response => response.json())
                     .then(data => {
                         var wb = XLSX.utils.book_new();
