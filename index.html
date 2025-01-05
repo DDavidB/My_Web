@@ -45,6 +45,16 @@
                 timeElement.textContent = timeString;
             }
         }
+    <script>
+        function checkCode() {
+            var code = document.getElementById("codeInput").value;
+            if (code === "2435") {
+                document.getElementById("secretImage").style.display = "block";
+            } else {
+                alert("הקוד שהזנת שגוי. נסה שוב.");
+            }
+        }
+    </script>
 
         function checkCode() {
             var code = document.getElementById("codeInput").value;
