@@ -20,7 +20,7 @@
             height: auto;
             display: none; /* Hide the image initially */
         }
-	
+    
     
         .child-fields {
             margin-top: 10px;
@@ -29,6 +29,15 @@
     <!-- הוספת קישור ל-SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script>
+        function checkCode() {
+            var code = document.getElementById("codeInput").value;
+            if (code === "2435") {
+                document.getElementById("secretImage").style.display = "block";
+            } else {
+                alert("הקוד שהזנת שגוי. נסה שוב.");
+            }
+        }
+
         let registrations = [];
         let childCount = 0;
 
@@ -43,25 +52,6 @@
             var timeElement = document.getElementById("time");
             if (timeElement) {
                 timeElement.textContent = timeString;
-            }
-        }
-    <script>
-        function checkCode() {
-            var code = document.getElementById("codeInput").value;
-            if (code === "2435") {
-                document.getElementById("secretImage").style.display = "block";
-            } else {
-                alert("הקוד שהזנת שגוי. נסה שוב.");
-            }
-        }
-    </script>
-
-        function checkCode() {
-            var code = document.getElementById("codeInput").value;
-            if (code === "2435") {
-                document.getElementById("secretImage").style.display = "block";
-            } else {
-                alert("הקוד שהזנת שגוי. נסה שוב.");
             }
         }
 
@@ -112,9 +102,7 @@
             var ageDate = new Date(diff);
             return Math.abs(ageDate.getUTCFullYear() - 1970);
         }
-	<!-- weather2day.co.il embed code -->
-        <iframe src="https://www.weather2day.co.il/radar-embed" frameborder="0" scrolling="no" width="190" height="190"></iframe>
-        <!-- weather2day.co.il embed code -->
+
         function addChild() {
             if (childCount >= 15) {
                 alert("לא ניתן להוסיף יותר מ-15 ילדים.");
@@ -148,7 +136,8 @@
         function downloadExcel() {
             var code = document.getElementById("excelCodeInput").value;
             if (code === "31669") {
-		fetch('http://localhost:3000/registrations')                    .then(response => response.json())
+                fetch('http://localhost:3000/registrations')
+                    .then(response => response.json())
                     .then(data => {
                         var formattedData = data.map(registration => {
                             return {
@@ -213,7 +202,8 @@
         <input type="text" id="street" name="street"><br>
         <label for="houseNumber">מספר בית:</label><br>
         <input type="text" id="houseNumber" name="houseNumber"><br>
-        <label for="numChildren">מספר ילדים:</label><br>
+        <label for="numChildren">מס[_{{{CITATION{{{_1{](https://github.com/fireun/Masomon-Online-Shopping/tree/6fa264f2c43c095aa821a7eafd80b8ca66a77afe/user%2FcancellationRequest.php)[_{{{CITATION{{{_2{](https://github.com/demkantor/developers_blog/tree/d90dacbf41736a773f2aa35ccfdb0838800f318d/src%2Fpages%2Fposts%2F005.md)[_{{{CITATION{{{_3{](https://github.com/Beats0/js-practice/tree/dbceaf1e663abfdee4de29b8308f70b68dc63b36/JavaScript_TheDefinitiveGuide%2FEvent%2FREADME.MD)
+		        <label for="numChildren">מספר ילדים:</label><br>
         <input type="number" id="numChildren" name="numChildren" min="0" max="15"><br>
         <button type="button" onclick="addChild()">הוסף ילד</button><br>
 
