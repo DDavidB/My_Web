@@ -141,7 +141,7 @@
                     .then(data => {
                         var formattedData = data.map(registration => {
                             return {
-                                'שם פרטי': registration.firstName,
+                                'NAME': registration.firstName,
                                 'שם משפחה': registration.lastName,
                                 'תעודת זהות': registration.idNumber,
                                 'מספר רכב': registration.carNumber,
@@ -224,3 +224,4 @@
     <p>השעה הנוכחית היא: <span id="time"></span></p>
 </body>
 </html>
+
